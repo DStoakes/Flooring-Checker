@@ -89,9 +89,12 @@
             return sessionStorage.getItem("loggedIn") === "true";
         }
 
+        const jsonFileUrl = 'https://github.com/DStoakes/Flooring-Checker/edit/main/data.json';
+
         // Load data from the JSON file
         let data; // Variable to store the JSON data
-        fetch('data.json')
+        // Load data from the JSON file
+        fetch(jsonFileUrl)
             .then(response => response.json())
             .then(jsonData => {
                 data = jsonData;
