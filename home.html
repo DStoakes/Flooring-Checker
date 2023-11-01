@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flooring Checker</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .button-container input[type="text"] {
+            margin-right: 10px;
+        }
+
+        .button-container button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flooring Checker</h1>
+        <div class="button-container">
+            <input type="text" id="jobNumber" placeholder="Job Number">
+            <input type="text" id="groundFloorFinish" placeholder="Ground Floor Finish">
+            <input type="text" id="groundFloorAllowance" placeholder="Allowance">
+            <input type="text" id="staircaseFinish" placeholder="Staircase Finish">
+            <input type="text" id="staircaseAllowance" placeholder="Allowance">
+            <input type="text" id="firstFloorFinish" placeholder="First Floor Finish">
+            <input type="text" id="firstFloorAllowance" placeholder="Allowance">
+            <button onclick="checkAndAddData()">Add</button>
+            <button onclick="editData()">Edit</button>
+            <button onclick="removeRow()">Remove</button>
+        </div>
+        <table>
+            <tr>
+                <th>Job Number</th>
+                <th>Ground Floor Finish</th>
+                <th>Allowance</th>
+                <th>Staircase Finish</th>
+                <th>Allowance</th>
+                <th>First Floor Finish</th>
+                <th>Allowance</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        // Check if the user is logged in
+        if (!isLoggedIn()) {
+            // Redirect to the login page
+            window.location.href = "login.html";
+        }
+
+        function isLoggedIn() {
+            return sessionStorage.getItem("loggedIn") === "true";
+        }
+
+        // Load data from the JSON file
+        let data; // Variable to store the JSON data
+        fetch('data.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                data = jsonData;
+                loadExistingData();
+            })
+            .catch(error => console.error('Error loading data:', error));
+
+        function checkAndAddData() {
+            var jobNumber = document.getElementById("jobNumber").value;
+            var table = document.querySelector('table');
+            var rows = table.getElementsByTagName('tr');
+
+            for (var i = 1; i < rows.length; i++) {
+                var row = rows[i];
+                var cells = row.getElementsByTagName('td');
+                if (cells[0].innerHTML === jobNumber) {
+                    var shouldEdit = confirm("This job number already exists. Do you want to edit the existing job?");
+                    if (shouldEdit) {
+                        editData();
+                        return;
+                    } else {
+                        return;
+                    }
+                }
+            }
+
+            addData();
+        }
+
+        function addData() {
+            var jobNumber = document.getElementById("jobNumber").value;
+            var groundFloorFinish = document.getElementById("groundFloorFinish").value;
+            var groundFloorAllowance = document.getElementById("groundFloorAllowance").value;
+            var staircaseFinish = document.getElementById("staircaseFinish").value;
+            var staircaseAllowance = document.getElementById("staircaseAllowance").value;
+            var firstFloorFinish = document.getElementById("firstFloorFinish").value;
+            var firstFloorAllowance = document.getElementById("firstFloorAllowance").value;
+
+            if (jobNumber || groundFloorFinish || groundFloorAllowance || staircaseFinish || staircaseAllowance || firstFloorFinish || firstFloorAllowance) {
+                // Create a new row in the table and add the data
+                var table = document.querySelector('table');
+                var newRow = table.insertRow(-1);
+                var cell1 = newRow.insertCell(0);
+                var cell2 = newRow.insertCell(1);
+                var cell3 = newRow.insertCell(2);
+                var cell4 = newRow.insertCell(3);
+                var cell5 = newRow.insertCell(4);
+                var cell6 = newRow.insertCell(5);
+                var cell7 = newRow.insertCell(6);
+                cell1.innerHTML = jobNumber;
+                cell2.innerHTML = groundFloorFinish;
+                cell3.innerHTML = groundFloorAllowance;
+                cell4.innerHTML = staircaseFinish;
+                cell5.innerHTML = staircaseAllowance;
+                cell6.innerHTML = firstFloorFinish;
+                cell7.innerHTML = firstFloorAllowance;
+
+                // Clear input fields
+                document.getElementById("jobNumber").value = "";
+                document.getElementById("groundFloorFinish").value = "";
+                document.getElementById("groundFloorAllowance").value = "";
+                document.getElementById("staircaseFinish").value = "";
+                document.getElementById("staircaseAllowance").value = "";
+                document.getElementById("firstFloorFinish").value = "";
+                document.getElementById("firstFloorAllowance").value = "";
+
+                // Save the added data to the JSON file
+                saveDataToJson(jobNumber, groundFloorFinish, groundFloorAllowance, staircaseFinish, staircaseAllowance, firstFloorFinish, firstFloorAllowance);
+            }
+        }
+
+        function editData() {
+            var jobNumber = document.getElementById("jobNumber").value;
+
+            if (jobNumber) {
+                var table = document.querySelector('table');
+                var rows = table.getElementsByTagName('tr');
+
+                for (var i = 1; i < rows.length; i++) {
+                    var row = rows[i];
+                    var cells = row.getElementsByTagName('td');
+                    if (cells[0].innerHTML === jobNumber) {
+                        cells[1].innerHTML = document.getElementById("groundFloorFinish").value;
+                        cells[2].innerHTML = document.getElementById("groundFloorAllowance").value;
+                        cells[3].innerHTML = document.getElementById("staircaseFinish").value;
+                        cells[4].innerHTML = document.getElementById("staircaseAllowance").value;
+                        cells[5].innerHTML = document.getElementById("firstFloorFinish").value;
+                        cells[6].innerHTML = document.getElementById("firstFloorAllowance").value;
+
+                        // Clear input fields
+                        document.getElementById("jobNumber").value = "";
+                        document.getElementById("groundFloorFinish").value = "";
+                        document.getElementById("groundFloorAllowance").value = "";
+                        document.getElementById("staircaseFinish").value = "";
+                        document.getElementById("staircaseAllowance").value = "";
+                        document.getElementById("firstFloorFinish").value = "";
+                        document.getElementById("firstFloorAllowance").value = "";
+
+                        // Save the updated data to the JSON file
+                        saveDataToJson(cells[0].innerHTML, cells[1].innerHTML, cells[2].innerHTML, cells[3].innerHTML, cells[4].innerHTML, cells[5].innerHTML, cells[6].innerHTML);
+                        return; // Exit the loop after finding the matching row
+                    }
+                }
+            }
+        }
+
+        function removeRow() {
+            var jobNumber = document.getElementById("jobNumber").value;
+
+            if (jobNumber) {
+                var table = document.querySelector('table');
+                var rows = table.getElementsByTagName('tr');
+
+                for (var i = 1; i < rows.length; i++) {
+                    var row = rows[i];
+                    var cells = row.getElementsByTagName('td');
+                    if (cells[0].innerHTML === jobNumber) {
+                        table.deleteRow(i);
+                        i--; // Adjust the index since a row has been removed
+                        document.getElementById("jobNumber").value = "";
+
+                        // Remove the data from the JSON file
+                        removeDataFromJson(jobNumber);
+                        return; // Exit the loop after finding the matching row
+                    }
+                }
+            }
+        }
+
+        function saveDataToJson(jobNumber, groundFloorFinish, groundFloorAllowance, staircaseFinish, staircaseAllowance, firstFloorFinish, firstFloorAllowance) {
+            if (data) {
+                // Check if a matching item already exists and update it
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].jobNumber === jobNumber) {
+                        data[i].groundFloorFinish = groundFloorFinish;
+                        data[i].groundFloorAllowance = groundFloorAllowance;
+                        data[i].staircaseFinish = staircaseFinish;
+                        data[i].staircaseAllowance = staircaseAllowance;
+                        data[i].firstFloorFinish = firstFloorFinish;
+                        data[i].firstFloorAllowance = firstFloorAllowance;
+
+                        // Update the JSON file
+                        updateDataInJsonFile(data);
+                        return;
+                    }
+                }
+            }
+        }
+
+        function removeDataFromJson(jobNumber) {
+            if (data) {
+                // Filter out the item with the specified job number
+                data = data.filter(function (item) {
+                    return item.jobNumber !== jobNumber;
+                });
+
+                // Update the JSON file
+                updateDataInJsonFile(data);
+            }
+        }
+
+        function updateDataInJsonFile(data) {
+            // Use the Fetch API to update the JSON file
+            fetch('data.json', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Data updated successfully.');
+                    } else {
+                        console.error('Failed to update data.');
+                    }
+                })
+                .catch(error => console.error('Error updating data:', error));
+        }
+
+        function loadExistingData() {
+            if (data) {
+                var table = document.querySelector('table');
+                data.forEach(function (item) {
+                    var newRow = table.insertRow(-1);
+                    var cell1 = newRow.insertCell(0);
+                    var cell2 = newRow.insertCell(1);
+                    var cell3 = newRow.insertCell(2);
+                    var cell4 = newRow.insertCell(3);
+                    var cell5 = newRow.insertCell(4);
+                    var cell6 = newRow.insertCell(5);
+                    var cell7 = newRow.insertCell(6);
+                    cell1.innerHTML = item.jobNumber;
+                    cell2.innerHTML = item.groundFloorFinish;
+                    cell3.innerHTML = item.groundFloorAllowance;
+                    cell4.innerHTML = item.staircaseFinish;
+                    cell5.innerHTML = item.staircaseAllowance;
+                    cell6.innerHTML = item.firstFloorFinish;
+                    cell7.innerHTML = item.firstFloorAllowance;
+                });
+            }
+        }
+    </script>
+</body>
+</html>
