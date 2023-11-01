@@ -8,14 +8,11 @@
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
         }
 
         .container {
             max-width: 400px;
+            margin: 0 auto;
             padding: 20px;
             background: #fff;
             text-align: center;
@@ -50,7 +47,7 @@
 <body>
     <div class="container">
         <h2>Login Page</h2>
-        <form id="loginForm" action="auth.php" method="post">
+        <form id="loginForm" action="home.html" onsubmit="return validateLogin()">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required><br><br>
 
@@ -60,5 +57,26 @@
             <button type="submit">Login</button>
         </form>
     </div>
+
+    <script>
+	function validateLogin() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            if (username === "user1" && password === "pass") {
+		localStorage.setItem("loggedIn", "true");
+                return true; // Allow login
+    		// Set the session flag to indicate that the user is logged in
+    		sessionStorage.setItem("loggedIn", "true");
+            } else {
+                alert("Invalid username or password. Please try again.");
+                return false; // Prevent form submission
+            }
+        }
+
+    	// Set the session flag to indicate that the user is logged in
+    	sessionStorage.setItem("loggedIn", "true");
+
+    </script>
 </body>
 </html>
