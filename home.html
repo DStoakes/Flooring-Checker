@@ -217,7 +217,7 @@
                         document.getElementById("jobNumber").value = "";
 
                         // Remove the data from the JSON file
-                        removeDataFromJson(jobNumber);
+                        removeDataFromJson(jsonFileUrl, jobNumber);
                         return; // Exit the loop after finding the matching row
                     }
                 }
@@ -237,12 +237,13 @@
                         data[i].firstFloorAllowance = firstFloorAllowance;
 
                         // Update the JSON file
-                        updateDataInJsonFile(data);
+                        updateDataInJsonFile(jsonFileUrl, data);
                         return;
                     }
                 }
             }
         }
+
 
         function removeDataFromJson(jobNumber) {
             if (data) {
@@ -252,7 +253,7 @@
                 });
 
                 // Update the JSON file
-                updateDataInJsonFile(data);
+                 updateDataInJsonFile(jsonFileUrl, data);
             }
         }
 
